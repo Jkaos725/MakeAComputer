@@ -104,7 +104,7 @@ Top View
 
 View looking at Instruction Memory
 
-<img width="256" height="133" alt="2026-09-01_10 11 16" src="https://github.com/user-attachments/assets/99cef4f9-78b3-44d0-9ef8-7888d040cb98" />
+<img width="512" height="266" alt="2026-09-01_10 11 16" src="https://github.com/user-attachments/assets/99cef4f9-78b3-44d0-9ef8-7888d040cb98" />
 
 Based on Matt's episode 5 video, this is 2 blocks to the right.
 
