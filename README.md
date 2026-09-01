@@ -69,11 +69,15 @@ Mine are found in //<modpack-base-file>/config/worldedit/schematics
 Now, you can run the new command in minecraft
 ```
 //schematic laod <<name-of-file>>.schem
+```
 
+Look at the [where to stand](#where-to-stand-to-paste) before running the paste command
+```
 //paste -as
 ```
 
 Make sure to include -as as it will replace blocks without replacing everything else with air
+
 
 # New Programs
 
@@ -84,7 +88,8 @@ Two programs were made for testing the Instruction Memory from Episode 5
 
 The test.as showed a lot of broken bits and logic in the code. The final result shows the system working, but the memory and ALU are still subject to look over. The last few registers are only to be needed testing.
 
-# Where to Stand to paste?
+# Where to Stand to Paste?
+#Where to Stand to paste?
 
 From the top, back, right redstone dust is 1 block up, 2 blocks back, and 2 blocks to the right.
 
