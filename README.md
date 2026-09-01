@@ -95,9 +95,11 @@ From the top, back, right redstone dust is 1 block up, 2 blocks back, and 2 bloc
 
 
 Side View
+
 <img width="512" height="266" alt="side view" src="https://github.com/user-attachments/assets/fe3b8dd3-1409-4827-ba07-f3b48ea84e8d" /> 
 
 Top View
+
 <img width="512" height="266" alt="top view" src="https://github.com/user-attachments/assets/bd2bd767-609c-452c-9452-284c08775252" />
 
 View looking at Instruction Memory
