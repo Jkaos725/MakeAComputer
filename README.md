@@ -1,207 +1,104 @@
-# BEFORE TRYING TO MAKE AND/OR RUN A PROGRAM, READ THIS WHOLE PAGE!
-DISCLAIMER: Basic assembly knowledge is assumed.
+## Background Information
 
->If you've never done assembly, you can learn online, learn from talking to people in my [discord](https://discord.gg/V5KFaF63mV), or you can watch my [video series](https://www.youtube.com/playlist?list=PL5LiOvrbVo8nPTtdXAdSmDWzu85zzdgRT) on this computer.
+Based on [mattbatwings BatPU-2 Redstone Computer](https://github.com/mattbatwings/BatPU-2)
 
-## What's in this repo?
+This is an edited version of his where I made differences based on where I was in his [Let's Make a Redstone Computer! series](https://www.youtube.com/playlist?list=PL5LiOvrbVo8nPTtdXAdSmDWzu85zzdgRT)
 
-All the supporting code I wrote for my new [redstone computer](https://youtu.be/3gBZHXqnleU?si=brgAO4tlePdB6vPR)
+I am using 26.1.2 which is the oldest version the newest version of [Redstone Tools](https://github.com/RedstoneTools/redstonetools-mod) is available for.
 
-programs - A folder containing all the programs that were in the showcase \
-assembler.py - A script to convert .as (assembly) files to .mc (machine code) files \
-schematic.py - A script to convert .mc files to .schem (worldedit schematic) files \
-main.py - A script to convert .as files to .schem files (Using assembler.py, then schematic.py)
+The documentation for the program and assembly can be found in [this sheets example](https://docs.google.com/spreadsheets/d/1Bj3wHV-JifR2vP4HRYoCWrdXYp3sGMG0Q58Nm56W4aI/edit?gid=0#gid=0) that is made by mattbatwings
 
-## How can I create a program?
+Most of the code is made by mattbatwings. This is just made to edit the code to my current specifications
 
-To create a new program, simply create a text file, change the extension type to .as, and open the file with your favorite text editor.
+This is initially made to follow from Episode 5, instruction memory.
 
-Programs are written in my custom assembly language, described by this [ISA](https://docs.google.com/spreadsheets/d/1Bj3wHV-JifR2vP4HRYoCWrdXYp3sGMG0Q58Nm56W4aI/edit?gid=0#gid=0). 
-**I recommend reading over it thoroughly before continuing.**
+# Changes
+schematic.py is the majority of the changes. I had multiple repeaters being placed in areas they shouldn't be.
+I spend a good hour resetting my ALU, Register File, and connections to make sure they work again.
 
-### Syntax
+The main thing I saw from the previous version was two fold.
 
-Every instruction is written with an opcode followed by the operands. The order of operands remains exactly the same between assembly and machine code. For example, according to the ISA, the add instruction has opcode mnemonic ADD and operands Reg A, Reg B, Reg C. So,
+1. There were extra repeaters being placed for parts I did not have nor did not need to be reset.
+2. The commands were not working whenever I did add the new code to the Instruction Memory
 
-```ADD r1 r2 r3``` 
+The byte 1 and byte 2 are flipped to follow the machine code.
+Before, it would read the last 8 bits followed by the first 8 bits. 
 
-will compute r1 + r2 and put it into r3, as described by the pseudocode column.
+I wired up the Instruction Memory to be the same bits as seen in machine code.
+This took troubleshooting where the numbers were going, so I just swapped the two areas the array is split in python.
 
-### Labels
+The next step was removing all of the rest functions in the memory. All of the features used to make sure the program is reset. 
+With how simple the program is, I set it back to only submit the program to ensure no extra repeaters are placed.
 
-Labels are supported. Labels must have a dot as the first character. Labels can be on their own line, or before an instruction on the same line. A label will always resolve to its absolute address, as all jumps are absolute.
+# How to run?
 
+Requirements: 
+- Python installed
+- Minecraft modpack with WorldEdit
+
+Initialize Python
 ```
-LDI r1 10
-.loop // I'm a label on my own line
-DEC r1
-BRH zero .exit
-JMP .loop
-.exit HLT // I'm a label on the same line as an instruction
-```
-
-### Definitions
-
-Definitions of integer values are supported. Definitions are written with the following syntax:
-
-```
-define my_value 3
+uv init
 ```
 
-This makes any future reference to my_value resolve to 3.
-
-### Symbols
-
-Opcodes can be written as their 3-letter mnemonic
-
-Registers can be written as r0 through r15
-
-Immediates can be written in decimal or in binary/hex using the 0b/0x prefix 
-
-Zero flag true condition can be written as eq, =, z, zero \
-Zero flag false condition can be written as ne, !=, nz, notzero \
-Carry flag true condition can be written as ge, >=, c, carry \
-Carry flag false condition can be written as lt, <, nc, notcarry
-
-Single characters can be written using single or double quotes. This will resolve to their character code in the ISA (Notes on box AB10)
-
-Ports can be written as their name with underscores between them. For example, port 246 has name "Clear Screen Buffer", so clear_screen_buffer will resolve to 246
-
-## Running a program on the emulator
-
-- Grab the [latest release](https://github.com/AdoHTQ/Batpu2-VM/releases)
-- Drag and drop the .as file onto the righthand side
-- Start!
-
-## Running a program on the minecraft cpu
-
-DISCLAIMER: This will be **extremely slow**, as the cpu completes 1 instruction every 10 seconds at vanilla speed. See the next section for speedup methods.
-
->REQUIRED PREREQUISITES \
-A copy of Minecraft Java Edition 1.18.2 \
-[Worldedit](https://www.curseforge.com/minecraft/mc-mods/worldedit) (Fabric Mod) \
-[RedstoneTools](https://modrinth.com/mod/redstone-tools) (Fabric Mod) \
-A python installation
-
-- Clone this repository
-- Put the desired [program].as into the programs folder
-- Open main.py and change helloworld in ```program = 'helloworld'``` to the name of your program
-- Run main.py (Note: You may need to import mcschematic with the command "pip install mcschematic". If that doesn't work, try "python -m pip install mcschematic")
-- Drag and drop the resulting [program].schem into .minecraft/config/worldedit/schematics
-- Download the cpu from the [world download](https://www.planetminecraft.com/project/new-redstone-computer/)
-- Go to coordinate point 190.5, 154, -0.5. You should be standing on a light gray wool with two repeaters coming out of it (Note: Press F3 to view coordinates)
-- Run ```//schem load [program]```
-- Run ```//paste -as```
-- Run ```//update```
-- Head to the input controller and press the "Run Program" button!
-
-### Speedup  Method #1 - Carpet Mod
-
-[Carpet](https://www.curseforge.com/minecraft/mc-mods/carpet) is a fabric mod that allows you to speed up the game. Vanilla minecraft runs at 20 game ticks per second, but running ```/tick rate [X]``` will change the speed to X game ticks per second instead. 
-
-500 is the maximum allowed tick rate, which results in a 25x speedup. This tick rate will execute 2.5 instructions per second rather than the vanilla 0.1 instructions per second.
-
-### Speedup Method #2 - MCHPRS
-
-[MCHPRS](https://github.com/MCHPR/MCHPRS/releases) is a custom server designed to speedup redstone to incredible speeds. This is what I used for the showcase.
-
-- NOTE THAT THESE INSTRUCTIONS ARE FOR WINDOWS ONLY
-- Grab the [latest release](https://github.com/MCHPR/MCHPRS/releases)
-- Run the .exe in a new folder
-- A server console should launch. Test connecting to the server by joining the multiplayer ip ```localhost```. Also, new folders/files should have also been created. One of these folders should be called "schems"
-- Go back to the cpu in singleplayer. You should have your program already pasted in and updated. Create a worldedit selection of the entire computer. Run ``//minsel``, ``//copy``, and ```//schem save [name]```
-- Transfer the newly created schematic from .minecraft/config/worldedit/schematics to the MCHPRS schems folder
-- Join the server again. Run ```//load [name]```, and ```//paste```
-- You're ready to run the program! Use ```/rtps [X]``` to set the redstone ticks per second, or ```/rtps unlimited``` for maximum speed.
-
-## Example programs
-
-Hello world! 
+Install Required Addons
 ```
-// Clear character buffer
-LDI r15 clear_chars_buffer
-STR r15 r0
-
-// Write "HELLOWORLD"
-LDI r15 write_char
-
-LDI r14 "H"
-STR r15 r14
-LDI r14 "E"
-STR r15 r14
-LDI r14 "L"
-STR r15 r14
-LDI r14 "L"
-STR r15 r14
-LDI r14 "O"
-STR r15 r14
-LDI r14 "W"
-STR r15 r14
-LDI r14 "O"
-STR r15 r14
-LDI r14 "R"
-STR r15 r14
-LDI r14 "L"
-STR r15 r14
-LDI r14 "D"
-STR r15 r14
-
-// Push character buffer
-LDI r15 buffer_chars
-STR r15 r0
-
-HLT
+uv add mcschematic 
 ```
 
-Plot a single pixel
+Open main.py and change 
 ```
-// r1 - X
-// r2 - Y
-
-LDI r1 3
-LDI r2 4
-
-// Clear screen buffer
-LDI r15 clear_screen_buffer
-STR r15 r0
-
-// Store coordinates
-LDI r15 pixel_x
-STR r15 r1
-LDI r15 pixel_y
-STR r15 r2
-
-// Draw pixel
-LDI r15 draw_pixel
-STR r15 r0
-
-// Push screen buffer
-LDI r15 buffer_screen
-STR r15 r0
-
-HLT
+program = '<current_file>'
 ```
+to the program you want to convert.
 
-Fill the screen using a nested for loop
+Run to create new schematic
 
 ```
-// Useful ports
-LDI r12 pixel_x 
-LDI r13 pixel_y 
-LDI r14 draw_pixel 
-LDI r15 buffer_screen 
-
-LDI r2 32 
-.outer_loop
-LDI r1 32 
-STR r13 r2                 // update Pixel Y 
-.inner_loop 
-STR r12 r1                 // update Pixel X 
-STR r14 r0                 // draw pixel 
-STR r15 r0                 // push buffer to screen 
-DEC r1 
-BRH ge .inner_loop 
-DEC r2 
-BRH ge .outer_loop 
-HLT
+uv run main.py
 ```
+
+Finally, open programs and copy the .schem file.
+
+You want to add this to your version of modded Minecraft with 
+
+Add this to your worldedit schematics.
+
+Mine are found in //<modpack-base-file>/config/worldedit/schematics
+
+Now, you can run the new command in minecraft
+```
+//schematic laod <<name-of-file>>.schem
+
+//paste -as
+```
+
+Make sure to include -as as it will replace blocks without replacing everything else with air
+
+# New Programs
+
+Two programs were made for testing the Instruction Memory from Episode 5
+
+1. Basic.as - initial test to ensure the Instruction Memory works by setting two values and adding them into the third register.
+2. test.as - a comprehensive test to look over the different functions of the program. This was made to see where blocks were missing or repeaters were added to block results.
+
+The test.as showed a lot of broken bits and logic in the code. The final result shows the system working, but the memory and ALU are still subject to look over. The last few registers are only to be needed testing.
+
+# Where to Stand to paste?
+
+From the top, back, right redstone dust is 1 block up, 2 blocks back, and 2 blocks to the right.
+
+
+Side View
+<img width="512" height="266" alt="side view" src="https://github.com/user-attachments/assets/fe3b8dd3-1409-4827-ba07-f3b48ea84e8d" /> 
+
+Top View
+<img width="512" height="266" alt="top view" src="https://github.com/user-attachments/assets/bd2bd767-609c-452c-9452-284c08775252" />
+
+View looking at Instruction Memory
+
+<img width="256" height="133" alt="2026-09-01_10 11 16" src="https://github.com/user-attachments/assets/99cef4f9-78b3-44d0-9ef8-7888d040cb98" />
+
+Based on Matt's episode 5 video, this is 2 blocks to the right.
+
+If you paste where Matt was for his video, it will paste blocks and repeaters inside the logic and block the redstone flow allowing for 0 instructions to get through.
